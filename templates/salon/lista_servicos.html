@@ -1,0 +1,21 @@
+{% extends 'adminlte3/base.html' %}
+{% load static %}
+
+{% block title %}Lista de Serviços{% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="container">
+                <h1>Lista de Serviços</h1>
+                <ul class="list-group">
+                    {% for servico in servicos %}
+                    <li class="list-group-item">{{ servico.nome }} - R$ {{ servico.valor }}</li>
+                    {% endfor %}
+                </ul>
+                <br>
+                <a href="{% url 'home' %}" class="btn btn-primary">Voltar</a>
+            </div>
+        </section>
+    </div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'adminlte3/base.html' %}
+
+{% block title %}Lista de Produtos{% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="container">
+                <h1>Produtos em Estoque</h1>
+                <div class="btn-group mb-3">
+                    <a href="{% url 'adicionar_produto' %}" class="btn btn-primary">Adicionar Produto</a>
+                </div>
+                <div class="mb-3">
+                    <label for="categorias">Filtrar por Categoria:</label>
+                    <select id="categorias" onchange="location = this.value;">
+                        <option value="{% url 'lista_produtos' %}">Todas</option>
+                        {% for categoria in categorias %}
+                            <option value="{% url 'filtrar_por_categoria' categoria.id %}" {% if categoria == categoria_selecionada %}selected{% endif %}>{{ categoria.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <ul class="list-group">
+                    {% for produto in produtos %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ produto.nome }} - {{ produto.categoria.nome }} - {{ produto.quantidade }}
+                        <div class="btn-group">
+                            <a href="{% url 'atualizar_quantidade' produto.id %}" class="btn btn-warning btn-sm">Atualizar Quantidade</a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <br>
+                <a href="{% url 'home' %}" class="btn btn-primary">Voltar</a>
+            </div>
+        </section>
+    </div>
+{% endblock %}

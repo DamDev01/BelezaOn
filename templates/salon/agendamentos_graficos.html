@@ -1,0 +1,126 @@
+<!-- templates/salon/agendamentos_graficos.html -->
+{% extends 'adminlte3/base.html' %}
+{% load static %}
+
+{% block title %}Gráficos de Desempenhos{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <section class="content">
+        <div class="container">
+            <h1>Gráficos de Desempenhos</h1>
+
+            <form method="get" action="{% url 'agendamentos_graficos' %}" class="mb-3">
+                <div class="form-group">
+                    <label for="formaPagamento">Filtrar por Forma de Pagamento:</label>
+                    <select name="forma_pagamento" id="formaPagamento" class="form-control">
+                        <option value="">Todos</option>
+                        <option value="pix" {% if forma_pagamento_selecionada == 'pix' %}selected{% endif %}>PIX</option>
+                        <option value="debito" {% if forma_pagamento_selecionada == 'debito' %}selected{% endif %}>Débito</option>
+                        <option value="credito" {% if forma_pagamento_selecionada == 'credito' %}selected{% endif %}>Crédito</option>
+                        <option value="dinheiro" {% if forma_pagamento_selecionada == 'dinheiro' %}selected{% endif %}>Dinheiro</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+            </form>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <h2>Quantidade de Clientes </h2>
+                    <canvas id="clientesChart"></canvas>
+                </div>
+                <div class="col-md-4">
+                    <h2>Faturamento por Mês</h2>
+                    <canvas id="valorTotalChart"></canvas>
+                </div>
+                <div class="col-md-4">
+                    <h2>Formas de Pagamento</h2>
+                    <canvas id="formasPagamentoChart"></canvas>
+                </div>
+            </div>
+
+            <a href="{% url 'home' %}" class="btn btn-primary">Voltar</a>
+        </div>
+    </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Dados passados pelo contexto do Django
+        const agendamentosData = JSON.parse('{{ agendamentos_data_json|escapejs }}');
+        const formasPagamento = JSON.parse('{{ formas_pagamento_json|escapejs }}');
+        const clientesPorMes = JSON.parse('{{ clientes_por_mes_json|escapejs }}');
+
+        // Função para gerar cores aleatórias
+        function randomColor() {
+            return '#' + Math.random().toString(16).substr(-6);
+        }
+
+        // Função para remover a opção 'null' de um array
+        function removeNullOption(array) {
+            return array.filter(item => item !== null);
+        }
+
+        // Remover a opção 'null' das formas de pagamento
+        delete formasPagamento['null'];
+
+        // Configuração dos gráficos
+        const config = {
+            type: 'doughnut',
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                },
+            },
+        };
+
+        // Configuração do gráfico de clientes atendidos por mês
+        const clientesCtx = document.getElementById('clientesChart').getContext('2d');
+        const clientesLabels = clientesPorMes.map(item => item.month + ' ' + item.year);
+        const clientesData = {
+            labels: clientesLabels,
+            datasets: [{
+                label: 'Quantidade de Clientes',
+                data: removeNullOption(clientesPorMes.map(item => item.count)),
+                backgroundColor: clientesPorMes.map(() => randomColor()), // Cores aleatórias
+                borderColor: 'rgba(255, 255, 255, 1)',
+                borderWidth: 1
+            }]
+        };
+        new Chart(clientesCtx, {...config, data: clientesData});
+
+        // Configuração do gráfico de faturamento por mês
+        const valorTotalCtx = document.getElementById('valorTotalChart').getContext('2d');
+        const valorTotalLabels = agendamentosData.map(item => item.month + ' ' + item.year);
+        const valorTotalData = {
+            labels: valorTotalLabels,
+            datasets: [{
+                label: 'Faturamento',
+                data: removeNullOption(agendamentosData.map(item => item.valor_total)),
+                backgroundColor: agendamentosData.map(() => randomColor()), // Cores aleatórias
+                borderColor: 'rgba(255, 255, 255, 1)',
+                borderWidth: 1
+            }]
+        };
+        new Chart(valorTotalCtx, {...config, data: valorTotalData});
+
+        // Configuração do gráfico de formas de pagamento
+        const formasPagamentoCtx = document.getElementById('formasPagamentoChart').getContext('2d');
+        const formasPagamentoLabels = Object.keys(formasPagamento);
+        const formasPagamentoData = {
+            labels: formasPagamentoLabels,
+            datasets: [{
+                label: 'Formas de Pagamento',
+                data: removeNullOption(Object.values(formasPagamento)),
+                backgroundColor: Object.values(formasPagamento).map(() => randomColor()), // Cores aleatórias
+                borderColor: 'rgba(255, 255, 255, 1)',
+                borderWidth: 1
+            }]
+        };
+        new Chart(formasPagamentoCtx, {...config, data: formasPagamentoData});
+    });
+</script>
+{% endblock %}

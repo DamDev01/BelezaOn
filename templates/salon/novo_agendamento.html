@@ -1,0 +1,92 @@
+{% extends 'adminlte3/base.html' %}
+{% load static %}
+
+{% block title %}Novo Agendamento{% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Novo Agendamento</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+                            <li class="breadcrumb-item active">Novo Agendamento</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Detalhes do Agendamento</h3>
+                            </div>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="nome_cliente">Nome do Cliente:</label>
+                                        <input type="text" class="form-control" id="nome_cliente" name="nome_cliente" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="servico">Serviço:</label>
+                                        <select class="form-control" id="servico" name="servico" required>
+                                            <option value="">Selecione um serviço</option>
+                                            {% for servico in servicos %}
+                                                <option value="{{ servico.id }}">{{ servico.nome }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="data">Data:</label>
+                                        <input type="date" class="form-control" id="data" name="data" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hora">Hora:</label>
+                                        <input type="time" class="form-control" id="hora" name="hora" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="valor">Valor:</label>
+                                        <input type="text" class="form-control" id="valor" name="valor">
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">Agendar</button>
+                                    <a href="{% url 'home' %}" class="btn btn-secondary">Voltar</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#servico').change(function() {
+                var servico_id = $(this).val();
+                $.ajax({
+                    url: '/obter-valor-servico/',
+                    data: {
+                        'servico_id': servico_id
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#valor').val(data.valor);
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Erro ao obter valor do serviço');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

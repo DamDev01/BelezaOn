@@ -1,0 +1,20 @@
+<!-- templates/agendamento_form.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Agendar Serviço</title>
+</head>
+<body>
+    <h1>Agendar Serviço</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="id_nome_cliente">Nome do Cliente:</label>
+        {{ form.nome_cliente }}
+        <br>
+        {{ form.as_p }}
+        <button type="submit">Agendar</button>
+    </form>
+</body>
+</html>

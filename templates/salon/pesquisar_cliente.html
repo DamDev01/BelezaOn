@@ -1,0 +1,61 @@
+{% extends 'adminlte3/base.html' %}
+{% load static %}
+
+{% block title %}Pesquisar Cliente{% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="container">
+                <h1>Pesquisar Cliente</h1>
+
+                <form method="get" action="{% url 'pesquisar_cliente' %}" class="mb-3" id="pesquisa-form">
+                    <div class="form-group">
+                        <label for="clienteNome">Nome do Cliente:</label>
+                        <input type="text" name="cliente" id="clienteNome" class="form-control" value="{% if query %}{{ query }}{% endif %}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Pesquisar</button>
+                </form>
+
+                {% if query %}
+                    {% if resultados %}
+                        <h2>Resultados para "{{ query }}":</h2>
+                        <ul class="list-group mb-2">
+                            {% for agendamento in resultados %}
+                                {% if agendamento.concluido %}
+                                    <li class="list-group-item">
+                                        {{ agendamento.cliente.nome }} - {{ agendamento.servico.nome }} - Data: {{ agendamento.data|date:"d/m/Y" }} - Hora: {{ agendamento.hora_formatada }} - 
+                                        {% if agendamento.concluido and agendamento.valor %}
+                                            Valor: R$ {{ agendamento.valor }}
+                                        {% else %}
+                                            Valor: Não disponível
+                                        {% endif %}
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                        <h3>Total Gasto: R$ {{ total_gasto }}</h3>
+                    {% else %}
+                        <p>Nenhum resultado para "{{ query }}".</p>
+                    {% endif %}
+                {% endif %}
+                
+                <a href="{% url 'home' %}" class="btn btn-primary">Voltar</a>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("clienteNome").addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                document.getElementById("pesquisa-form").submit();
+                this.value = ""; // Limpa o campo após submeter o formulário
+            }
+        });
+    });
+</script>
+{% endblock %}

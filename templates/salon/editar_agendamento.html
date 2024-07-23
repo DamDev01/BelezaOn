@@ -1,0 +1,81 @@
+{% extends 'adminlte3/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Editar Agendamento</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+                        <li class="breadcrumb-item active">Editar Agendamento</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-6">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Detalhes do Agendamento</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="nome_cliente">Nome do Cliente:</label>
+                                    <input type="text" name="nome_cliente" class="form-control" id="nome_cliente" value="{{ nome_cliente }}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="servico">Serviço:</label>
+                                    <select name="servico" id="servico" class="form-control">
+                                        {% for servico in servicos %}
+                                            <option value="{{ servico.id }}" {% if servico.id == agendamento.servico.id %}selected{% endif %}>{{ servico.nome }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="data">Data:</label>
+                                    <input type="date" name="data" class="form-control" id="data" value="{{ agendamento.data|date:'Y-m-d' }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="hora">Hora:</label>
+                                    <input type="time" name="hora" class="form-control" id="hora" value="{{ agendamento.hora }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="valor">Valor:</label>
+                                    <input type="text" name="valor" class="form-control" id="valor" value="{{ agendamento.valor }}">
+                                </div>
+                            </div>
+                            <!-- /.card-body -->
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Salvar</button>
+                                <a href="{% url 'agendamentos_pendentes' %}" class="btn btn-secondary">Cancelar</a>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!--/.col (left) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+<!-- templates/salon/agendamentos_concluidos.html -->
+{% extends 'adminlte3/base.html' %}
+{% load static %}
+
+{% block title %}Agendamentos Concluídos{% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="container">
+                <h1>Agendamentos Concluídos</h1>
+                
+                <form method="get" action="{% url 'agendamentos_concluidos' %}" class="mb-3">
+                    <div class="form-group">
+                        <label for="formaPagamento">Filtrar por Forma de Pagamento:</label>
+                        <select name="forma_pagamento" id="formaPagamento" class="form-control">
+                            <option value="">Todos</option>
+                            <option value="pix" {% if forma_pagamento_selecionada == 'pix' %}selected{% endif %}>PIX</option>
+                            <option value="debito" {% if forma_pagamento_selecionada == 'debito' %}selected{% endif %}>Débito</option>
+                            <option value="credito" {% if forma_pagamento_selecionada == 'credito' %}selected{% endif %}>Crédito</option>
+                            <option value="dinheiro" {% if forma_pagamento_selecionada == 'dinheiro' %}selected{% endif %}>Dinheiro</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </form>
+
+                {% for mes in agendamentos_data %}
+                    <div class="mb-4">
+                        <h2>{{ mes.month }}</h2>
+                        <ul class="list-group mb-2">
+                            {% for agendamento in mes.agendamentos %}
+                                <li class="list-group-item">
+                                    {{ agendamento.cliente.nome }} - {{ agendamento.servico.nome }} - {{ agendamento.data|date:"d/m/Y" }} - {{ agendamento.hora_formatada }} - R$ {{ agendamento.valor }} - Pagamento: {{ agendamento.forma_pagamento|capfirst }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <h3>Valor Total do Mês: R$ {{ mes.valor_total }}</h3>
+                    </div>
+                {% endfor %}
+                <a href="{% url 'home' %}" class="btn btn-primary">Voltar</a>
+            </div>
+        </section>
+    </div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'adminlte3/base.html' %}
+
+{% block title_outer %}
+    <!-- Conteúdo do título aqui -->
+{% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="container">
+                <h1>Bem-vindo ao Beleza<span style="color: rgb(252, 49, 82);">ON</span> </h1>
+                <div class="btn-group">
+                    <a href="{% url 'novo_agendamento' %}" class="btn btn-primary">Novo Agendamento</a>
+                    <a href="{% url 'agendamentos_pendentes' %}" class="btn btn-warning">Agendamentos Pendentes</a>
+                    <a href="{% url 'agendamentos_concluidos' %}" class="btn btn-success">Agendamentos Concluídos</a>
+                </div>
+                <!-- Adicione mais opções conforme necessário -->
+            </div>
+        </section>
+    </div>
+{% endblock %}

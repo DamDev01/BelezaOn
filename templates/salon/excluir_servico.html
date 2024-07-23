@@ -1,0 +1,21 @@
+<!-- templates/salon/confirmar_exclusao.html -->
+{% extends 'adminlte3/base.html' %}
+{% load static %}
+
+{% block title %}Confirmar Exclusão{% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="container">
+                <h1>Confirmar Exclusão</h1>
+                <p>Tem certeza que deseja excluir o agendamento de {{ agendamento.cliente.nome }} para {{ agendamento.servico.nome }}?</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                    <a href="{% url 'agendamentos_pendentes' %}" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </section>
+    </div>
+{% endblock %}
